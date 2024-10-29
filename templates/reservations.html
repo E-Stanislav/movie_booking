@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}My Reservations{% endblock %}
+{% block content %}
+<h2>My Reservations</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Movie Title</th>
+            <th>Showtime</th>
+            <th>Seats</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.showtime.movie.title }}</td>
+                <td>{{ reservation.showtime.showtime_date.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ reservation.seats }}</td>
+                <td>
+                    <!-- Кнопка для отмены с использованием JavaScript -->
+                    <button onclick="cancelReservation('{{ url_for('reservation.cancel_reservation', reservation_id=reservation.id) }}')" class="btn btn-danger btn-sm">Cancel</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    async function cancelReservation(url) {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getCookie('access_token')  // Получаем токен из cookies
+            },
+            credentials: 'same-origin'
+        });
+        
+        if (response.ok) {
+            alert("Reservation canceled successfully.");
+            window.location.reload();  // Перезагружаем страницу для обновления списка
+        } else {
+            alert("Failed to cancel reservation.");
+        }
+    }
+
+    // Функция для получения токена из cookies
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}{{ movie.title }}{% endblock %}
+{% block content %}
+<h2>{{ movie.title }}</h2>
+<p>{{ movie.description }}</p>
+<p><strong>Genre:</strong> {{ movie.genre }}</p>
+
+<h3>Showtimes</h3>
+<ul class="list-group">
+    {% for showtime in movie.showtimes %}
+        <li class="list-group-item">
+            <strong>Showtime:</strong> {{ showtime.showtime_date.strftime("%Y-%m-%d %H:%M") }}
+            <a href="{{ url_for('reservation.reserve_seat', showtime_id=showtime.id) }}" class="btn btn-primary btn-sm float-end">Reserve Seats</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

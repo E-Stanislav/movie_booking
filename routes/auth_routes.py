@@ -42,8 +42,8 @@ def login():
         return render_template("login.html", error="Invalid credentials")
     return render_template('login.html')
 
-@auth_bp.route('/logout', methods=['POST', 'GET'])
-def logout():
+@auth_bp.route('/signout', methods=['POST', 'GET'])
+def signout():
     # Очистка cookies и данных сессии
     response = redirect(url_for('auth.login'))  # Перенаправление на страницу входа
     unset_jwt_cookies(response)  # Удаление JWT cookies

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from app import db
 from models import Reservation, Showtime, Seat
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -29,3 +29,11 @@ def make_reservation():
     db.session.commit()
 
     return redirect(url_for('reservation.list_reservations'))
+
+@reservation_bp.route('/cancel_reservation/<int:reservation_id>', methods=['POST'])
+def cancel_reservation(reservation_id):
+    reservation = Reservation.query.get_or_404(reservation_id)
+    db.session.delete(reservation)
+    db.session.commit()
+    flash('Бронирование успешно отменено', 'success')
+    return redirect(url_for('reservation.list_reservations'))  # Вернуться к списку бронирований пользователя

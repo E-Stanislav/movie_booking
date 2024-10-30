@@ -32,3 +32,6 @@ class Reservation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     showtime_id = db.Column(db.Integer, db.ForeignKey('showtime.id'), nullable=False)
     seats = db.Column(db.String(50), nullable=False)
+    # Связи для удобного доступа к пользователю и сеансу
+    user = db.relationship('User', backref='reservations', lazy=True)
+    showtime = db.relationship('Showtime', backref='reservations', lazy=True)

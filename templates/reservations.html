@@ -28,24 +28,31 @@
 
 <script>
     async function cancelReservation(url) {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getCookie('access_token')  // Получаем токен из cookies
-            },
-            credentials: 'same-origin'
-        });
-        
-        if (response.ok) {
-            alert("Reservation canceled successfully.");
-            window.location.reload();  // Перезагружаем страницу для обновления списка
-        } else {
-            alert("Failed to cancel reservation.");
+        if (confirm("Are you sure you want to cancel this reservation?")) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getCookie('access_token')  // Получаем токен из cookies
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                if (response.ok) {
+                    alert("Reservation canceled successfully.");
+                    window.location.reload();  // Перезагрузка страницы для обновления списка бронирований
+                } else {
+                    alert("Failed to cancel reservation.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while canceling the reservation.");
+            }
         }
     }
 
-    // Функция для получения токена из cookies
+    // Функция для получения CSRF-токена из cookies, если он нужен
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);

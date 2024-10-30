@@ -1,42 +1,9 @@
-from datetime import datetime
-from app import create_app, db
-from models import Movie, Showtime, Seat  # Импортируем модели
+from datetime import datetime, timedelta
+from app import create_app, db, bcrypt
+from models import Movie, Showtime, Seat, User, Reservation  # Импортируем модели
+from random import randint
 
 def add_test_data():
-    # Добавление тестовых фильмов
-    # movie1 = Movie(
-    #     title="The Matrix",
-    #     description="A hacker discovers the truth about his world.",
-    #     genre="Sci-Fi"
-    # )
-    # movie2 = Movie(
-    #     title="Inception",
-    #     description="A thief who steals corporate secrets through dream-sharing technology.",
-    #     genre="Action"
-    # )
-    
-    # # Добавление сеансов для фильмов
-    # showtime1 = Showtime(
-    #     movie=movie1,
-    #     showtime_date=datetime(2024, 11, 1, 18, 30)
-    # )
-    # showtime2 = Showtime(
-    #     movie=movie1,
-    #     showtime_date=datetime(2024, 11, 2, 20, 0)
-    # )
-    # showtime3 = Showtime(
-    #     movie=movie2,
-    #     showtime_date=datetime(2024, 11, 3, 19, 30)
-    # )
-    
-    # Добавление мест для каждого сеанса
-    # seat1 = Seat(seat_number="A1", is_reserved=False, showtime=showtime1)
-    # seat2 = Seat(seat_number="A2", is_reserved=True, showtime=showtime1)
-    # seat3 = Seat(seat_number="B1", is_reserved=False, showtime=showtime2)
-    # seat4 = Seat(seat_number="B2", is_reserved=True, showtime=showtime2)
-    # seat5 = Seat(seat_number="C1", is_reserved=False, showtime=showtime3)
-    # seat6 = Seat(seat_number="C2", is_reserved=True, showtime=showtime3)
-
     # Сохранение всех данных в БД
     list_test_films = [
         ["Матрица", "Хакер узнает правду о своей реальности и присоединяется к восстанию против машин.", "Научная фантастика"],
@@ -60,6 +27,28 @@ def add_test_data():
         ["Рататуй", "Крыса с талантом к кулинарии помогает молодому повару преуспеть в ресторане.", "Анимация"],
         ["Гарри Поттер и философский камень", "Мальчик-волшебник начинает учебу в школе магии Хогвартс.", "Фэнтези"]
     ]
+    user_data = [
+        {"username": "admin", "email": "admin@example.com", "password": "adminpassword", "role": "admin"},
+        {"username": "user1", "email": "user1@example.com", "password": "user1password", "role": "user"},
+        {"username": "user2", "email": "user2@example.com", "password": "user2password", "role": "user"}
+    ]
+
+    # Создание пользователей с хешированием пароля
+    users = []
+    for data in user_data:
+        password_hash = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
+        user = User(
+            username=data["username"],
+            email=data["email"],
+            password_hash=password_hash,
+            role=data["role"]
+        )
+        users.append(user)
+
+    # Добавление пользователей в БД
+    db.session.add_all(users)
+
+    # Добавление фильмов
     movies = []
     for film in list_test_films:
         movies.append(Movie(
@@ -68,8 +57,74 @@ def add_test_data():
             genre=film[2]
         ))
 
+    # Сохранение фильмов в БД
+    db.session.add_all(movies)
+    db.session.commit()
+
+    # Добавление сеансов и мест для каждого фильма
+    showtimes = []
+    seats = []
+    reservations = []
+    current_date = datetime.now()
+
+    for movie in movies:
+        for i in range(2):  # Создаем 2 сеанса для каждого фильма
+            showtime_date = current_date + timedelta(days=randint(1,5), hours=randint(12,23), minutes=randint(0, 59))  # Устанавливаем время 18:00 с интервалом в 1 день
+            showtime = Showtime(
+                movie_id=movie.id,
+                showtime_date=showtime_date
+            )
+            showtimes.append(showtime)
+            
+            # Добавление мест для каждого сеанса (например, 5 мест)
+            for j in range(7):
+                seat_number = f"A{j+1}"  # Номера мест: A1, A2, ..., A5
+                seat = Seat(
+                    seat_number=seat_number,
+                    is_reserved=False,
+                    showtime=showtime
+                )
+                seats.append(seat)
+
+    # Сохранение сеансов и мест в БД
+    db.session.add_all(showtimes + seats)
+    db.session.commit()
+
+    # Добавление бронирований для пользователей
+    for showtime in showtimes:
+        reserved_seats = ["A1", "A2"]  # Пример забронированных мест
+        reservation = Reservation(
+            user_id=users[1].id,  # Связываем бронирование с user1
+            showtime_id=showtime.id,
+            seats=", ".join(reserved_seats)
+        )
+        reservations.append(reservation)
+        
+        # Обновляем статус мест как забронированных
+        for seat in seats:
+            if seat.showtime_id == showtime.id and seat.seat_number in reserved_seats:
+                seat.is_reserved = True
+
+    # Сохранение бронирований в БД
+    db.session.add_all(reservations)
+
     
     db.session.add_all(movies)
+    db.session.commit()
+    
+    showtimes = []
+    current_date = datetime.now()
+
+    for movie in movies:
+        for i in range(3):  # Добавляем по 3 сеанса для каждого фильма
+            showtime_date = current_date + timedelta(days=i, hours=18)  # Устанавливаем время на 18:00, 18:00 на следующий день и так далее
+            showtimes.append(Showtime(
+                movie_id=movie.id,
+                showtime_date=showtime_date
+            ))
+
+    # Сохранение сеансов в БД
+    db.session.add_all(showtimes)
     db.session.commit()
     print("Test data added successfully!")
 

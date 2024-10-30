@@ -8,9 +8,9 @@ reservation_bp = Blueprint('reservation', __name__)
 @reservation_bp.route('/reservations', methods=['GET'])
 @jwt_required()
 def list_reservations():
-    user_id = get_jwt_identity()['id']
-    reservations = Reservation.query.filter_by(user_id=user_id).all()
-    return render_template('reservations.html', reservations=reservations)
+    user_identity = get_jwt_identity()
+    reservations = Reservation.query.filter_by(user_id=user_identity["id"]).all()
+    return render_template('reservations.html', reservations=reservations, user=user_identity)
 
 @reservation_bp.route('/reservations', methods=['POST'])
 @jwt_required()

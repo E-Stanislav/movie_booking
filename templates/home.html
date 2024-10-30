@@ -4,20 +4,25 @@
 <h2>Welcome to the Movie Reservation System</h2>
 
 {% if user %}
-    <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Hello, {{ user.id }}!</h4>
-        <p>Role: {{ user.role | capitalize }}</p>
+    <div class="alert alert-success text-center" role="alert">
+        <h4 class="alert-heading">Hello, {{ user.id }}! Welcome back to your cinema experience.</h4>
+        <p>Your role: <strong>{{ user.role | capitalize }}</strong></p>
         <hr>
-        <p class="mb-0">Thank you for logging in. Feel free to explore our movie selection and manage your reservations.</p>
+        <p class="mb-0">
+            We’re thrilled to have you here! Dive into our exclusive collection of top-rated movies, explore personalized recommendations, 
+            and secure your seats for an unmatched viewing experience. Your next movie adventure is just a click away!
+        </p>
     </div>
-    <a href="/movies" class="btn btn-primary">Browse Movies</a>
-    <a href="/reservations" class="btn btn-secondary">My Reservations</a>
+
+    <div class="text-center mt-4">
+        <a href="/movies" class="btn btn-primary btn-lg">Browse Movies</a>
+        <a href="/reservations" class="btn btn-secondary btn-lg">My Reservations</a>
+    </div>
 {% else %}
     <div class="alert alert-info" role="alert">
         <p>Welcome to our movie reservation system. Here, you can browse available movies, reserve seats, and manage your bookings.</p>
         <p>Please <a href="{{ url_for('auth.login') }}">log in</a> or <a href="{{ url_for('auth.signup') }}">sign up</a> to access all features.</p>
     </div>
-    <p>Debug info: user = {{ user }}</p>  <!-- Печатает значение user для отладки -->
     <a href="/movies" class="btn btn-primary">Browse Movies</a>
 {% endif %}
 

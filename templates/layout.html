@@ -11,21 +11,24 @@
         <a class="navbar-brand" href="/">Movie Reservation</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signup">Sign Up</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/movies">Movies</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/reservations">My Reservations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">LogOut</a>
-                </li>
+                {% if user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/movies">Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reservations">My Reservations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">LogOut</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">Sign Up</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </nav>

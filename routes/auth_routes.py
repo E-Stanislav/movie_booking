@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
 from app import db, bcrypt
 from models import User
-from flask_jwt_extended import create_access_token, set_access_cookies
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies
 from datetime import timedelta
 
 auth_bp = Blueprint('auth', __name__)
@@ -36,3 +36,12 @@ def login():
 
         return render_template("login.html", error="Invalid credentials")
     return render_template('login.html')
+
+
+@auth_bp.route('/logout', methods=['POST', 'GET'])
+def logout():
+    # Очистка cookies и данных сессии
+    response = redirect(url_for('auth.login'))  # Перенаправление на страницу входа
+    unset_jwt_cookies(response)  # Удаление JWT cookies
+    session.clear()  # Очистка данных сессии
+    return render_template('logout.html')

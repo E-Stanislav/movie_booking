@@ -5,8 +5,8 @@
 
 {% if user %}
     <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Hello, {{ user['id'] }}!</h4>
-        <p>Role: {{ user['role'] | capitalize }}</p>
+        <h4 class="alert-heading">Hello, {{ user.id }}!</h4>
+        <p>Role: {{ user.role | capitalize }}</p>
         <hr>
         <p class="mb-0">Thank you for logging in. Feel free to explore our movie selection and manage your reservations.</p>
     </div>
@@ -17,6 +17,7 @@
         <p>Welcome to our movie reservation system. Here, you can browse available movies, reserve seats, and manage your bookings.</p>
         <p>Please <a href="{{ url_for('auth.login') }}">log in</a> or <a href="{{ url_for('auth.signup') }}">sign up</a> to access all features.</p>
     </div>
+    <p>Debug info: user = {{ user }}</p>  <!-- Печатает значение user для отладки -->
     <a href="/movies" class="btn btn-primary">Browse Movies</a>
 {% endif %}
 

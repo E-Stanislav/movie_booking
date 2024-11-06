@@ -30,7 +30,6 @@ def add_test_data():
     user_data = [
         {"username": "admin", "email": "admin@example.com", "password": "adminpassword", "role": "admin"},
         {"username": "user1", "email": "user1@example.com", "password": "user1password", "role": "user"},
-        {"username": "user2", "email": "user2@example.com", "password": "user2password", "role": "user"}
     ]
 
     # Создание пользователей с хешированием пароля

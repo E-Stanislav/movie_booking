@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, request
 from app import db
 from models import Movie, Showtime
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -8,7 +8,9 @@ movie_bp = Blueprint('movie', __name__)
 @movie_bp.route('/movies', methods=['GET'])
 @jwt_required()
 def list_movies():
-    movies = Movie.query.all()
+    page = request.args.get('page', 1, type=int)  # Получаем номер страницы из параметра запроса
+    per_page = 5  # Количество фильмов на странице
+    movies = Movie.query.paginate(page=page, per_page=per_page)
     user_identity = get_jwt_identity()
     return render_template('movies.html', movies=movies, user=user_identity)
 

@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from app import create_app, db, bcrypt
 from models import Movie, Showtime, Seat, User, Reservation  # Импортируем модели
-from random import randint
+from random import randint, choice
+
 
 def add_test_data():
     # Сохранение всех данных в БД
@@ -66,7 +67,9 @@ def add_test_data():
     reservations = []
     current_date = datetime.now()
 
-    for movie in movies:
+    # for movie in movies:
+    for index in range(5):
+        movie = choice(movies)  # Выбираем один из фильмов
         for i in range(2):  # Создаем 2 сеанса для каждого фильма
             showtime_date = current_date + timedelta(days=randint(1,5), hours=randint(12,23), minutes=randint(0, 59))  # Устанавливаем время 18:00 с интервалом в 1 день
             showtime = Showtime(
@@ -76,8 +79,10 @@ def add_test_data():
             showtimes.append(showtime)
             
             # Добавление мест для каждого сеанса (например, 5 мест)
+            russian_alphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ'
+            letter = choice(russian_alphabet)
             for j in range(7):
-                seat_number = f"A{j+1}"  # Номера мест: A1, A2, ..., A5
+                seat_number = f"{letter}{j+randint(1,30)}"  # Номера мест: A1, A2, ..., A5
                 seat = Seat(
                     seat_number=seat_number,
                     is_reserved=False,
@@ -91,7 +96,12 @@ def add_test_data():
 
     # Добавление бронирований для пользователей
     for showtime in showtimes:
-        reserved_seats = ["A1", "A2"]  # Пример забронированных мест
+        letter_1 = choice(russian_alphabet)
+        seat_number_1 = f"{letter_1}{j+randint(1,30)}"
+        letter_2 = choice(russian_alphabet)
+        seat_number_2 = f"{letter_2}{j+randint(1,30)}"
+        
+        reserved_seats = [seat_number_1, seat_number_2]  # Пример забронированных мест
         reservation = Reservation(
             user_id=users[1].id,  # Связываем бронирование с user1
             showtime_id=showtime.id,

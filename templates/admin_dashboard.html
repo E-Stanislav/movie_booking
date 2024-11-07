@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>Admin Dashboard</h2>
+
+{% if user %}
+    <div class="alert alert-warning text-center" role="alert">
+        <h4 class="alert-heading">Hello, {{ user.email }}!</h4>
+        <p>Your role: <strong>{{ user.role | capitalize }}</strong></p>
+        <hr>
+        <p class="mb-0">
+            Welcome to the admin dashboard.<br>
+            Here you can manage user accounts, movie listings, reservations, and access detailed analytics on system usage.<br>
+            Use the tools below to keep the system running smoothly.
+        </p>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/manage_users" class="btn btn-primary btn-lg">Manage Users</a>
+        <a href="/manage_movies" class="btn btn-secondary btn-lg">Manage Movies</a>
+        <a href="/view_analytics" class="btn btn-info btn-lg">View Analytics</a>
+    </div>
+{% else %}
+    <div class="alert alert-danger" role="alert">
+        <p>You are not authorized to view this page. Please <a href="{{ url_for('auth.login') }}">log in</a> as an administrator to access the dashboard.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

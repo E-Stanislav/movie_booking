@@ -30,12 +30,15 @@ def login():
         if user and bcrypt.check_password_hash(user.password_hash, password):
             # Создаем токен для установки в cookies
             access_token = create_access_token(
-                identity={'id': user.id, 'role': user.role},
+                identity={'id': user.id, 'role': user.role, "email": user.email},
                 expires_delta=timedelta(days=1)
             )
             
             # Устанавливаем токен в cookies
-            response = redirect(url_for('main.home'))
+            if user.role == "admin":
+                response = redirect(url_for('main.admin_dashboard'))
+            else:
+                response = redirect(url_for('main.home'))
             set_access_cookies(response, access_token)
             return response
 

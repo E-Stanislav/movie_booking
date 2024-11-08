@@ -4,6 +4,8 @@ from models import Movie, Showtime, User
 from forms import MovieForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import random
+from datetime import datetime, timedelta
+
 
 movie_bp = Blueprint('movie', __name__)
 
@@ -36,7 +38,7 @@ def manage_movies():
         flash("Access denied. Admins only.", "danger")
         return redirect(url_for('main.home'))
     
-    form = MovieForm()
+    form = MovieForm(submit_text="Add Movie")
     if form.validate_on_submit():
         # Создаем новый объект Movie
         new_movie = Movie(
@@ -126,6 +128,7 @@ def view_analytics():
 
     # Пример: Генерация случайных данных для активности пользователей (замените на реальную логику)
     activity_labels = ["2024-11-01", "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05"]
+    activity_labels = [str(datetime.now().date() + timedelta(days=-i)) for i in range(30)]
     activity_data = [random.randint(50, 150) for _ in activity_labels]  # случайное количество активности на каждый день
 
     # Пример: Генерация случайных данных для популярного контента (замените на реальную логику)

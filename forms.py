@@ -6,4 +6,10 @@ class MovieForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     genre = StringField('Genre', validators=[DataRequired()])
-    submit = SubmitField('Update Movie')
+    
+    # Параметр для кнопки submit
+    submit = SubmitField()
+
+    def __init__(self, submit_text='Update Movie', *args, **kwargs):
+        super(MovieForm, self).__init__(*args, **kwargs)
+        self.submit.label.text = submit_text

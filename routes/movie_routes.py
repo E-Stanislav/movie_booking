@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, render_template, request, flash, redirect, url_for
 from app import db
-from models import Movie, Showtime
+from models import Movie, Showtime, User
 from forms import MovieForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
+import random
 
 movie_bp = Blueprint('movie', __name__)
 
@@ -53,7 +54,7 @@ def manage_movies():
     movies = Movie.query.all()
     return render_template('manage_movies.html', form=form, movies=movies, user=user_identity)
 
-@movie_bp.route('/delete_movie/<int:movie_id>', methods=['POST'])
+@movie_bp.route('/movies/<int:movie_id>', methods=['POST'])
 @jwt_required()
 def delete_movie(movie_id):
     user_identity = get_jwt_identity()
@@ -93,3 +94,50 @@ def edit_movie(movie_id):
         return redirect(url_for('movie.manage_movies'))
     
     return render_template('edit_movie.html', form=form, movie=movie, user=user_identity)
+
+@movie_bp.route('/manage_users')
+@jwt_required(optional=True)
+def manage_user():
+    # Получаем информацию о текущем пользователе
+    user_identity = get_jwt_identity()
+    
+    # Проверяем, что пользователь аутентифицирован и является администратором
+    if not user_identity or user_identity.get("role") != "admin":
+        flash("You do not have permission to access this page.", "warning")
+        return redirect(url_for('main_bp.home'))
+    
+    # Загружаем список всех пользователей из базы данных
+    users = User.query.all()
+    
+    # Рендерим шаблон с передачей текущего пользователя и списка пользователей
+    return render_template('manage_user.html', user=user_identity, users=users)
+
+
+@movie_bp.route('/view_analytics')
+@jwt_required(optional=True)
+def view_analytics():
+    # Получаем информацию о текущем пользователе
+    user_identity = get_jwt_identity()
+
+    # Проверяем, что пользователь аутентифицирован и является администратором
+    if not user_identity or user_identity.get("role") != "admin":
+        flash("You do not have permission to access this page.", "warning")
+        return redirect(url_for('main_bp.home'))
+
+    # Пример: Генерация случайных данных для активности пользователей (замените на реальную логику)
+    activity_labels = ["2024-11-01", "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05"]
+    activity_data = [random.randint(50, 150) for _ in activity_labels]  # случайное количество активности на каждый день
+
+    # Пример: Генерация случайных данных для популярного контента (замените на реальную логику)
+    content_labels = ["Movie A", "Movie B", "Movie C", "Movie D"]
+    content_data = [random.randint(20, 200) for _ in content_labels]  # количество просмотров для каждого фильма
+
+    # Рендерим шаблон с передачей текущего пользователя и данных для аналитики
+    return render_template(
+        'view_analytics.html',
+        user=user_identity,
+        activity_labels=activity_labels,
+        activity_data=activity_data,
+        content_labels=content_labels,
+        content_data=content_data
+    )

@@ -7,7 +7,7 @@ main_bp = Blueprint('main', __name__)
 @jwt_required(optional=True)
 def home():
     user_identity = get_jwt_identity()
-    if user_identity.get("role") == "admin":
+    if user_identity and user_identity.get("role") == "admin":
         return render_template('admin_dashboard.html', user=user_identity)
     return render_template('home.html', user=user_identity)
 

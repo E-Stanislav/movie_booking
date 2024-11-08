@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block title %}View Analytics{% endblock %}
+{% block content %}
+
+<h2>Analytics Dashboard</h2>
+
+<!-- Карточки общей статистики -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Total Users</h5>
+                <p>{{ total_users }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>New Users (Last Month)</h5>
+                <p>{{ new_users_last_month }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Active Users</h5>
+                <p>{{ active_users }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- График активности -->
+<h3>User Activity</h3>
+<canvas id="activityChart"></canvas>
+
+<!-- График популярного контента -->
+<h3>Popular Content</h3>
+<canvas id="contentChart"></canvas>
+
+<!-- Скрипты для графиков -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Пример кода для создания графика активности
+    var ctx = document.getElementById('activityChart').getContext('2d');
+    var activityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ activity_labels | tojson }},
+            datasets: [{
+                label: 'User Activity',
+                data: {{ activity_data | tojson }},
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false
+            }]
+        }
+    });
+
+    // Пример кода для графика популярного контента
+    var ctx2 = document.getElementById('contentChart').getContext('2d');
+    var contentChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ content_labels | tojson }},
+            datasets: [{
+                label: 'Views',
+                data: {{ content_data | tojson }},
+                backgroundColor: 'rgba(153, 102, 255, 0.6)'
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

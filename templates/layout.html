@@ -13,12 +13,25 @@
             <a class="navbar-brand" href="/">Movie Reservation</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    {% if user %}
+                    {% if user and user.role == "user" %}
                         <li class="nav-item">
                             <a class="nav-link" href="/movies">Movies</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/reservations">My Reservations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signout">Sign out</a>
+                        </li>
+                    {% elif user and user.role == "admin" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/manage_users">Manage users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/manage_movies">Manage movies</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/view_analytics">View analytics</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/signout">Sign out</a>
